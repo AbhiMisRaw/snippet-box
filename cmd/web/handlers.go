@@ -46,8 +46,19 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Display a form for creating a specific snippet"))
 }
 
-func (appp *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-	w.WriteHeader(201)
-	w.Write([]byte("New Snippet is saved."))
+func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+	title := "Hello from Abhi"
+	content := "Hello,\n This Snippet is from Abhi. :)"
+	expires := 7
+	id, err := app.snippets.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+	// w.Header().Add("Server", "Go")
+	// w.WriteHeader(201)
+	// w.Write([]byte("New Snippet is saved."))
+
+	// redirecting the user to the relevant page
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
